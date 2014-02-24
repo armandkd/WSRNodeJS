@@ -6,6 +6,8 @@ It currently works great on big screens (computer and tablets), and handles rule
 Give it a try ! It is accessible via : http://server:8080/controls  
 Made by armandkd.  
 
+![Example](http://i.imgur.com/C96uDuC.png)
+
 ###Features
 * Bootstrap responsive design
 * Modes to modify multiple rules easily
