@@ -11,7 +11,7 @@ Made by armandkd.
 * Support more complex plugins
 * Clean code
 
-If you don't see all glyphicons, please update your bootstrap.  
+If you don't see some glyphicons correctly, please update your bootstrap.  
 
 ##Framework
 This is the Server Side of the framework [S.A.R.A.H.](http://encausse.net/s-a-r-a-h), an Home Automation project built 

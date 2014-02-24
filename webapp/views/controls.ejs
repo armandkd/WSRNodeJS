@@ -75,23 +75,25 @@
 				break;
 			case "nuit":
 				rule(true, true);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
 				break;
 			case "film":
 				rule(false, false);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
 				break;
 			case "manuel":
 				rule(false, false);
 				break;
 			case "off":
 				rule(false, false);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
 				break;
 		}
 	});
 	$(".toggler").click(function () { toggle($(this).attr('id'),$(this).attr('alt')); });
 	function toggle(name, state){
+		var start = new Date().getTime();
+		while((new Date().getTime()- start) < 250) {}
 		$.ajax({
 			type: "GET",
 			url: "/sarah/lumieres",
