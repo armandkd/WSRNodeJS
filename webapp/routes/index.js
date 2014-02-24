@@ -24,3 +24,6 @@ exports.badge = function(req, res, next){
   res.render('badge'); 
 };
 
+exports.controls = function(req, res, next){ 
+  res.render('controls', { 'nav' : 'controls' }); 
+};

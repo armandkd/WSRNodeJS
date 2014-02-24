@@ -1,0 +1,116 @@
+<% layout('layouts/layout') %>
+<div class="stretch col-md-8 content" id="controls" style="padding-left: 50px">
+	<h1>Panneau de contrôle</h1>
+	<ul class="square-buttons">
+		<li><div class="depth"><div class="mode" id="standard"><span class="glyphicon glyphicon-home"></span><br>Standard</div></div></li>
+		<li><div class="depth"><div class="mode" id="travail"><span class="glyphicon glyphicon-briefcase"></span><br>Travail</div></div></li>
+		<li><div class="depth"><div class="mode" id="nuit"><span class="glyphicon glyphicon-dashboard"></span><br>Nuit</div></div></li>
+		<li><div class="depth"><div class="mode" id="film"><span class="glyphicon glyphicon-film"></span><br>Film</div></div></li>
+		<li><div class="depth"><div class="mode" id="manuel"><span class="glyphicon glyphicon-wrench"></span><br>Manuel</div></div></li>
+		<li><div class="depth"><div class="mode" id="off"><span class="glyphicon glyphicon-off"></span><br>OFF</div></div></li>
+	</ul>
+	<h2>Eclairage</h2>
+	<table width="80%" class="table table-striped eclairage">
+		<tr>
+			<th>Nom</td>
+			<th width="60px"></td>
+			<th width="60px"></td>
+		</tr>
+		<tr>
+			<td>Lumière salon<p class="description">Contrôle de l'halogène du salon</p></td>
+			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="du_salon" /></td>
+			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="du_salon" /></td>
+		</tr>
+		<tr>
+			<td>Lumière bureau<p class="description">Contrôle de la lumière du bureau</p></td>
+			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="du_bureau" /></td>
+			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="du_bureau" /></td>
+		</tr>
+	</table>
+	<h2>Equipements</h2>
+	<table width="80%" class="table table-striped equipements">
+		<tr>
+			<th>Nom</td>
+			<th width="60px"></td>
+			<th width="60px"></td>
+		</tr>
+		<tr>
+			<td>Chauffage<p class="description">Contrôle du chauffage</p></td>
+			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="chauffage" /></td>
+			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="chauffage" /></td>
+		</tr>
+		<tr>
+			<td>Porte d'entrée<p class="description">Contrôle de l'ouverture de la porte</p></td>
+			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="entree" /></td>
+			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="entree" /></td>
+		</tr>
+	</table>
+</div>
+<form method="POST" id="rules" action="/rules">
+	<input type="hidden" name="if" value="before">
+	<input type="hidden" name="script" value=" ">
+	<input type="hidden" name="then" value="">
+	<input type="hidden" name="disabled" value="true">
+	<input type="hidden" name="if" value="after">
+	<input type="hidden" name="script" value=" ">
+	<input type="hidden" name="then" value="">
+	<input type="hidden" name="disabled" value="true">
+	<input type="hidden" name="if" value="detecteurs">
+	<input type="hidden" id="script" name="script" value="">
+	<input type="hidden" name="then" value="lumieres">
+	<input type="hidden" id="state" name="disabled" value="">
+</form>
+<script>
+	$(".mode").click(function() {
+		$(".active").removeClass("active");
+		$(this).parent().addClass("active");
+		switch($(this).attr("id")) {
+			case "standard":
+				rule(true, false);
+				break;
+			case "travail":
+				rule(false, false);
+				toggle('du_salon',1);
+				toggle('du_bureau',1);
+				break;
+			case "nuit":
+				rule(true, true);
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				break;
+			case "film":
+				rule(false, false);
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				break;
+			case "manuel":
+				rule(false, false);
+				break;
+			case "off":
+				rule(false, false);
+				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { setTimeout(function() { toggle($(element).attr('id'),0); },400*index)} });
+				break;
+		}
+	});
+	$(".toggler").click(function () { toggle($(this).attr('id'),$(this).attr('alt')); });
+	function toggle(name, state){
+		$.ajax({
+			type: "GET",
+			url: "/sarah/lumieres",
+			data: {id: name, etat: state},
+			success: function(msg){
+				if(msg=="") {
+					$.notify("Pas de réponse", "warn");
+				} else {
+					$.notify(msg, "success");
+				}
+			},
+			error: function(){
+				$.notify("Erreur", "error");
+			}
+		});
+	}
+	function rule(state, tmp){
+		$('#script').val('var date = new Date();\noptions.id="0";\noptions.declencheur="1";\noptions.tmp=' + tmp + '\nif (date.getHours() > 18 || date.getHours() < 8) {\n  if (options.code=="5139785") {\n    options.id="du salon";\n    options.etat="1";\n  }\n}');
+		$('#state').val(!state);
+		$.post('/rules', $('#rules').serialize(), function(msg){ if(msg=="") { $.notify("Pas de réponse", "warn"); } else { $.notify("Succès", "success"); }});
+	}
+</script>

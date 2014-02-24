@@ -6,12 +6,13 @@
   <div class="stretch row">
       <div class="stretch col-md-2 hidden-print">
         <div id="navbar" >
-        
-          <h2><script>document.write(moment().format("HH:mm"));</script></h2>
-            
-          <p class="text-center" style="font-size: 20px; padding: 10px;"><a href="/home" class="btn btn-red" style="padding: 5px 30px">Accueil</a></p>
+          <h2 id="time"></h2>
+          <script>setInterval(function time(){ document.getElementById('time').innerHTML = moment().format("HH:mm"); return time; }(), 10000);</script>
+		  <% if (nav !== 'controls') { %>
+          <p class="text-center" style="font-size: 20px; padding: 10px;"><a href="/controls" class="btn btn-red" style="padding: 5px 30px">Panneau de contrôle</a></p>
             
           <ul class="nav">
+  		  	<li <%= nav == 'home' ? "class='active'" : "" %>><a href="/home" id="homeMenu">Accueil</a></li>
             <li <%= nav == 'store' ? "class='active'" : "" %>><a href="/store" id="storeMenu">Store</a></li>
             <li <%= nav == 'rules' ? "class='active'" : "" %>><a href="/rules" id="rulesMenu">Règles</a></li>
             <li <%= nav == 'kinect'? "class='active'" : "" %>><a href="/kinect">WebSocket</a></li>
@@ -43,6 +44,7 @@
           </ul>
           
           <p class="text-center" style="font-size: 20px; padding: 20px;"><span class="glyphicon glyphicon-ok-circle"></span></p>
+          <% } %>
           
         </div>
       </div>
@@ -53,6 +55,11 @@
       
       <div class="stretch col-md-2 hidden-print" >
         <div id="navchat">
+		  <% if (nav == 'controls') { %>
+		  <h2>Informations système</h2>
+		  <h3 id="news"></h3>
+		  <script>setInterval(function monitor(){$.ajax({type:"GET",url:"/sarah/monitor",success:function(msg){document.getElementById('news').innerHTML = msg.replace(/\n/g, "<br>")},error:function(){document.getElementById('news').innerHTML = "Erreur";}});return monitor;}(),360000);</script>
+		  <% } else { %>
           <h2>Live</h2>
           <h2 class="head" style="text-align: center"><img src="images/headline-logo.png" id="headline-logo" width="200"/></h2>
           
@@ -71,6 +78,7 @@
 	        </li>
 	        <% } %>
           </ul>
+		  <% } %>
         </div>
       </div>
   

@@ -1,5 +1,16 @@
 # [S.A.R.A.H.](http://encausse.net/s-a-r-a-h)
 
+##Control interface
+This is a project of web interface to control the S.A.R.A.H. project.
+It currently works great on big screens (computer and tablets), and handles rules and plugins.
+Give it a try ! It is accessible via : http://server:8080/controls
+Made by armandkd.
+
+###To-do
+* Saving current mode
+* Support more complex plugins
+* Clean code
+
 This is the Server Side of the framework [S.A.R.A.H.](http://encausse.net/s-a-r-a-h), an Home Automation project built 
 on top of:
 * C# (Kinect) client for Voice, Gesture, Face, QRCode recognition. 

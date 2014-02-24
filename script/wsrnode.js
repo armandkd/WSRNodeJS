@@ -68,6 +68,7 @@ app.get('/kinect',  routes.kinect);
 app.get('/about',   routes.about);
 app.get('/badge',   routes.badge);
 app.get('/plugin',  routes.plugin);
+app.get('/controls',  routes.controls);
 
 // Link app
 SARAH.express = { 
