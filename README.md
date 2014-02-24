@@ -11,6 +11,9 @@ Made by armandkd.
 * Support more complex plugins
 * Clean code
 
+If you don't see all glyphicons, please update your bootstrap.  
+
+##Framework
 This is the Server Side of the framework [S.A.R.A.H.](http://encausse.net/s-a-r-a-h), an Home Automation project built 
 on top of:
 * C# (Kinect) client for Voice, Gesture, Face, QRCode recognition. 
