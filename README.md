@@ -1,10 +1,10 @@
 # [S.A.R.A.H.](http://encausse.net/s-a-r-a-h)
 
 ##Control interface
-This is a project of web interface to control the S.A.R.A.H. project.
-It currently works great on big screens (computer and tablets), and handles rules and plugins.
-Give it a try ! It is accessible via : http://server:8080/controls
-Made by armandkd.
+This is a project of web interface to control the S.A.R.A.H. project.  
+It currently works great on big screens (computer and tablets), and handles rules and plugins.  
+Give it a try ! It is accessible via : http://server:8080/controls  
+Made by armandkd.  
 
 ###To-do
 * Saving current mode
