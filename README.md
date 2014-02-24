@@ -6,10 +6,23 @@ It currently works great on big screens (computer and tablets), and handles rule
 Give it a try ! It is accessible via : http://server:8080/controls  
 Made by armandkd.  
 
+###Features
+* Bootstrap responsive design
+* Modes to modify multiple rules easily
+* Individual control of toggle (ON/OFF) plugins
+* Side-clock auto-update
+* Statistics
+* Easily editable
+
 ###To-do
 * Saving current mode
 * Support more complex plugins
 * Clean code
+
+###Plugins used in this example
+* Raspberry-Pi monitoring : [monitor](https://github.com/armandkd/SARAH-Plugin-Monitor)
+* Light-control : [lumieres](https://github.com/armandkd/SARAH-Plugin-Lumieres)
+* Motion detection : [detecteurs](https://github.com/armandkd/SARAH-Plugin-Detecteurs)
 
 If you don't see some glyphicons correctly, please update your bootstrap.  
 
