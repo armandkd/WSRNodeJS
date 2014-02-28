@@ -19,7 +19,6 @@ Made by armandkd.
 ###To-do
 * Saving current mode
 * Support more complex plugins
-* Clean code
 
 ###Plugins used in this example
 * Raspberry-Pi monitoring : [monitor](https://github.com/armandkd/SARAH-Plugin-Monitor)
