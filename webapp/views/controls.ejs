@@ -1,50 +1,70 @@
 <% layout('layouts/layout') %>
+<%
+var modes = {
+	'standard': {
+		'name': 'Standard',
+		'icon': 'home',
+		'rule': [true, false],
+		'data': [] },
+	'travail': {
+		'name': 'Travail',
+		'icon': 'briefcase',
+		'rule': [false, false],
+		'data': [['du_salon', 1],['du_bureau', 1]] },
+	'nuit': {
+		'name': 'Nuit',
+		'icon': 'dashboard',
+		'rule': [true, true],
+		'data': [['all', 0]] },
+	'film': {
+		'name': 'Film',
+		'icon': 'film',
+		'rule': [false, false],
+		'data': [['all', 0]] },
+	'manuel': {
+		'name': 'Manuel',
+		'icon': 'wrench',
+		'rule': [false, false],
+		'data': [] },
+	'off': {
+		'name': 'OFF',
+		'icon': 'off',
+		'rule': [false, false],
+		'data': [['all', 0]] } }
+var acteurs = {
+	'eclairage': {
+		'name': 'Eclairage',
+		'data': {
+			'du_salon': ['Lumière salon', 'Contrôle de l\'halogène du salon'],
+			'du_bureau': ['Lumière bureau', 'Contrôle de la lumière du bureau'] } },
+	'equipements': {
+		'name': 'Equipements',
+		'data': {
+			'chauffage': ['Chauffage', 'Contrôle du chauffage'],
+			'entree': ['Porte d\'entrée', 'Contrôle de l\'ouverture de la porte'] } } }
+%>
 <div class="stretch col-md-8 content" id="controls" style="padding-left: 50px">
 	<h1>Panneau de contrôle</h1>
 	<ul class="square-buttons">
-		<li><div class="depth"><div class="mode" id="standard"><span class="glyphicon glyphicon-home"></span><br>Standard</div></div></li>
-		<li><div class="depth"><div class="mode" id="travail"><span class="glyphicon glyphicon-briefcase"></span><br>Travail</div></div></li>
-		<li><div class="depth"><div class="mode" id="nuit"><span class="glyphicon glyphicon-dashboard"></span><br>Nuit</div></div></li>
-		<li><div class="depth"><div class="mode" id="film"><span class="glyphicon glyphicon-film"></span><br>Film</div></div></li>
-		<li><div class="depth"><div class="mode" id="manuel"><span class="glyphicon glyphicon-wrench"></span><br>Manuel</div></div></li>
-		<li><div class="depth"><div class="mode" id="off"><span class="glyphicon glyphicon-off"></span><br>OFF</div></div></li>
+		<% for (id in modes) { %>
+		<li><div class="depth"><div class="mode" id="<%= id %>"><span class="glyphicon glyphicon-<%= modes[id]['icon'] %>"></span><br><%= modes[id]['name'] %></div></div></li>
+		<% } %>
 	</ul>
-	<h2>Eclairage</h2>
-	<table width="80%" class="table table-striped eclairage">
+	<% for (cat in acteurs) { %>
+	<h2><%= acteurs[cat]['name'] %></h2>
+	<table width="80%" class="table table-striped <%= cat %>">
 		<tr>
-			<th>Nom</td>
-			<th width="60px"></td>
-			<th width="60px"></td>
+			<th>Nom</th>
+			<th width="100px"></th>
 		</tr>
+		<% for (id in acteurs[cat]['data']) { %>
 		<tr>
-			<td>Lumière salon<p class="description">Contrôle de l'halogène du salon</p></td>
-			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="du_salon" /></td>
-			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="du_salon" /></td>
+			<td><%= acteurs[cat]['data'][id][0] %><p class="description"><%= acteurs[cat]['data'][id][1] %></p></td>
+			<td><div class="toggler" id="<%= id %>">&#xF011;</div></td>
 		</tr>
-		<tr>
-			<td>Lumière bureau<p class="description">Contrôle de la lumière du bureau</p></td>
-			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="du_bureau" /></td>
-			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="du_bureau" /></td>
-		</tr>
+		<% } %>
 	</table>
-	<h2>Equipements</h2>
-	<table width="80%" class="table table-striped equipements">
-		<tr>
-			<th>Nom</td>
-			<th width="60px"></td>
-			<th width="60px"></td>
-		</tr>
-		<tr>
-			<td>Chauffage<p class="description">Contrôle du chauffage</p></td>
-			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="chauffage" /></td>
-			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="chauffage" /></td>
-		</tr>
-		<tr>
-			<td>Porte d'entrée<p class="description">Contrôle de l'ouverture de la porte</p></td>
-			<td><img src="images/power-button-on.png" width="75px" alt="1" class="toggler" id="entree" /></td>
-			<td><img src="images/power-button-off.png" width="75px" alt="0" class="toggler" id="entree" /></td>
-		</tr>
-	</table>
+	<% } %>
 </div>
 <form method="POST" id="rules" action="/rules">
 	<input type="hidden" name="if" value="before">
@@ -61,58 +81,71 @@
 	<input type="hidden" id="state" name="disabled" value="">
 </form>
 <script>
-	$(".mode").click(function() {
-		$(".active").removeClass("active");
-		$(this).parent().addClass("active");
-		switch($(this).attr("id")) {
-			case "standard":
-				rule(true, false);
+	$(document).ready(function() {
+		$('.eclairage .toggler').each(function(index, element) {
+			$.ajax({
+				type: 'GET',
+				url: '/sarah/lumieres',
+				data: {action: 'get', id: $(element).attr('id')},
+				success: function(msg){
+					if (msg=='1') {
+						$(element).addClass('on');
+					} else if (msg!='0') {
+						$.notify('Etat incorrect', 'error');
+					}
+				},
+				error: function(){
+					$.notify('Erreur', 'error');
+				}
+			});
+		});
+	});
+	$('.mode').click(function() {
+		$('.active').removeClass('active');
+		$(this).parent().addClass('active');
+		switch($(this).attr('id')) {
+			<% for (id in modes) { %>
+			case '<%= id %>':
+				rule(<%= modes[id]['rule'][0] %>, <%= modes[id]['rule'][1] %>);
+				<% for (acteur in modes[id]['data']) { %>
+					<% if (modes[id]['data'][acteur][0]=='all') { %>
+				$('.eclairage .toggler').each(function(index, element) { toggle($(element).attr('id'),<%= modes[id]['data'][acteur][1] %>); });
+					<% } else { %>
+				toggle('<%= modes[id]['data'][acteur][0] %>', <%= modes[id]['data'][acteur][1] %>);
+					<% } %>
+				<% } %>
 				break;
-			case "travail":
-				rule(false, false);
-				toggle('du_salon',1);
-				toggle('du_bureau',1);
-				break;
-			case "nuit":
-				rule(true, true);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
-				break;
-			case "film":
-				rule(false, false);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
-				break;
-			case "manuel":
-				rule(false, false);
-				break;
-			case "off":
-				rule(false, false);
-				$('.eclairage .toggler').each(function(index, element) { if($(element).attr('alt')=="0") { toggle($(element).attr('id'),0); } });
-				break;
+			<% } %>
 		}
 	});
-	$(".toggler").click(function () { toggle($(this).attr('id'),$(this).attr('alt')); });
+	$('.toggler').click(function () { toggle($(this).attr('id'),$(this).hasClass('on') ? '0':'1'); });
 	function toggle(name, state){
 		var start = new Date().getTime();
 		while((new Date().getTime()- start) < 250) {}
 		$.ajax({
-			type: "GET",
-			url: "/sarah/lumieres",
-			data: {id: name, etat: state},
+			type: 'GET',
+			url: '/sarah/lumieres',
+			data: {action: 'set', id: name, etat: state},
 			success: function(msg){
-				if(msg=="") {
-					$.notify("Pas de réponse", "warn");
+				if(msg=='') {
+					$.notify('Pas de réponse', 'warn');
 				} else {
-					$.notify(msg, "success");
+					if (state=='1') {
+						$('#'+name).addClass('on');
+					} else {
+						$('#'+name).removeClass('on');
+					}
+					$.notify(msg, 'success');
 				}
 			},
 			error: function(){
-				$.notify("Erreur", "error");
+				$.notify('Erreur', 'error');
 			}
 		});
 	}
 	function rule(state, tmp){
-		$('#script').val('var date = new Date();\noptions.id="0";\noptions.declencheur="1";\noptions.tmp=' + tmp + '\nif (date.getHours() > 18 || date.getHours() < 8) {\n  if (options.code=="5139785") {\n    options.id="du salon";\n    options.etat="1";\n  }\n}');
+		$('#script').val('var date = new Date();\noptions.action="set";\noptions.id="0";\noptions.declencheur="1";\noptions.tmp=' + tmp + '\nif (date.getHours() > 18 || date.getHours() < 8) {\n  if (options.code=="5139785") {\n    options.id="du salon";\n    options.etat="1";\n  }\n}');
 		$('#state').val(!state);
-		$.post('/rules', $('#rules').serialize(), function(msg){ if(msg=="") { $.notify("Pas de réponse", "warn"); } else { $.notify("Succès", "success"); }});
+		$.post('/rules', $('#rules').serialize(), function(msg){ if(msg=='') { $.notify('Pas de réponse', 'warn'); } else { $.notify('Succès', 'success'); }});
 	}
 </script>
